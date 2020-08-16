@@ -1,0 +1,1412 @@
+{
+	"info": {
+		"_postman_id": "3985d19e-344d-424d-802d-2aa6df417a5a",
+		"name": "Gradebook-12-08",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "load first page",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "c5c799e6-e63e-48a3-a9de-69016f873e79",
+						"exec": [
+							"\r",
+							"var text = \"\";\r",
+							"var possible = \"abcdefghijklmnopqrstuvwxyz\";\r",
+							"for (var i = 0; i < 5; i++) {\r",
+							"    text += possible.charAt(Math.floor(Math.random() * possible.length));\r",
+							"}\r",
+							"\r",
+							"postman.setEnvironmentVariable('email', 'jelenak+'+text + '@gmail.com');\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://gradebook.vivifyideas.com/",
+					"protocol": "https",
+					"host": [
+						"gradebook",
+						"vivifyideas",
+						"com"
+					],
+					"path": [
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "register user 1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "6badab33-66e9-4f8b-bd3f-51a5f9af4fab",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);\r",
+							"\r",
+							"//postman.setEnvironmentVariable(\"token\", jsonData.access_token);\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"\r",
+							"const schema = {\r",
+							"    \"type\": \"object\",\r",
+							"     \"properties\": { \r",
+							"                \"id\":{\"type\":\"integer\"},\r",
+							"                \"firstName\":{\"type\":\"string\"},\r",
+							"                \"lastName\":{\"type\":\"string\"},\r",
+							"                \"email\":{\"type\":\"string\"},\r",
+							"                \"email_verified_at\":{\"type\":\"string\"},\r",
+							"                \"termsAndConditions\":{\"type\":[\"string\", \"null\"]},\r",
+							"                \"created_at\":{\"type\":\"string\"},\r",
+							"                \"updated_at\":{\"type\":\"string\"},\r",
+							"                \"professor\":{\r",
+							"                    \"type\":\"object\",\r",
+							"                    \"properties\": { \r",
+							"                       \"id\":{\"type\":\"integer\"},\r",
+							"                       \"user_id\":{\"type\":\"integer\"},\r",
+							"                       \"url\":{\"type\":[\"string\", \"null\"]},\r",
+							"                        \"created_at\":{\"type\":\"string\"},\r",
+							"                        \"updated_at\":{\"type\":\"string\"}\r",
+							"                    },\r",
+							"                     \"required\":[\"id\",\"user_id\",\"created_at\",\"updated_at\"]\r",
+							"                }\r",
+							"}\r",
+							"}\r",
+							"pm.test(\"Validate schema\", () => {\r",
+							"    pm.response.to.have.jsonSchema(schema);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"firstName\": \"Drvo\",\r\n    \"lastName\": \"Hrast\",\r\n    \"email\": \"{{email}}\",\r\n    \"password\": \"123456789\"\r\n}"
+				},
+				"url": {
+					"raw": "{{url}}register",
+					"host": [
+						"{{url}}register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login user 1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "46ddb1b9-22a2-43ae-9ca5-0518088a5faa",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);\r",
+							"\r",
+							"postman.setEnvironmentVariable(\"userId\", jsonData.user.id);\r",
+							"postman.setEnvironmentVariable(\"token\", jsonData.token);\r",
+							"\r",
+							"pm.environment.set(\"idProf\", jsonData.user.professor.id);\r",
+							"\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"const schema = {\r",
+							"    \"type\": \"object\",\r",
+							"    \"properties\": {\r",
+							"        \"token\":{\"type\":\"string\"},\r",
+							"        \"user\":{\r",
+							"            \"type\":\"object\",\r",
+							"            \"properties\": { \r",
+							"                \"id\":{\"type\":\"integer\"},\r",
+							"                \"firstName\":{\"type\":\"string\"},\r",
+							"                \"lastName\":{\"type\":\"string\"},\r",
+							"                \"email\":{\"type\":\"string\"},\r",
+							"                \"email_verified_at\":{\"type\":\"string\"},\r",
+							"                \"termsAndConditions\":{\"type\":[\"string\", \"null\"]},\r",
+							"                \"created_at\":{\"type\":\"string\"},\r",
+							"                \"updated_at\":{\"type\":\"string\"},\r",
+							"                \"professor\":{\r",
+							"                    \"type\":\"object\",\r",
+							"                    \"properties\": { \r",
+							"                       \"id\":{\"type\":\"integer\"},\r",
+							"                       \"user_id\":{\"type\":\"integer\"},\r",
+							"                       \"url\":{\"type\":[\"string\", \"null\"]},\r",
+							"                        \"created_at\":{\"type\":\"string\"},\r",
+							"                        \"updated_at\":{\"type\":\"string\"}\r",
+							"                    },\r",
+							"                     \"required\":[\"id\",\"user_id\",\"created_at\",\"updated_at\"]\r",
+							"                }\r",
+							"\r",
+							"\r",
+							"            },\r",
+							"            \"required\":[\"id\",\"firstName\",\"lastName\",\"email\",\"email_verified_at\",\"created_at\",\"updated_at\"]\r",
+							"        }\r",
+							"    },\r",
+							"    \"required\":[\"token\", \"user\"]\r",
+							"};\r",
+							"pm.test(\"Validate schema\", () => {\r",
+							"    pm.response.to.have.jsonSchema(schema);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"{{email}}\",\r\n    \"password\": \"123456789\"\r\n}"
+				},
+				"url": {
+					"raw": "{{url}}login",
+					"host": [
+						"{{url}}login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "all gradebooks page_page 1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "76613a2d-2830-453c-a882-07d1e638bb57",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);\r",
+							"\r",
+							"pm.test(\"Check the number of gradebooks\", function () {\r",
+							"    pm.expect(jsonData.data).to.have.lengthOf(10);\r",
+							"});\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}search?search_term=&page=1",
+					"host": [
+						"{{url}}search"
+					],
+					"query": [
+						{
+							"key": "search_term",
+							"value": ""
+						},
+						{
+							"key": "page",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "filter gradebooks",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "934dc90d-8f15-449a-aa78-cfbda36c2860",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}search?search_term=bla%20bla&page=1",
+					"host": [
+						"{{url}}search"
+					],
+					"query": [
+						{
+							"key": "search_term",
+							"value": "bla%20bla"
+						},
+						{
+							"key": "page",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create gradebook",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "6e64894f-6af1-4c66-a5ef-d0e5479327d9",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);\r",
+							"\r",
+							"postman.setEnvironmentVariable(\"uderId\", jsonData.user_id);\r",
+							"postman.setEnvironmentVariable(\"idBookgrade\", jsonData.id);\r",
+							"\r",
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"const schema = {\r",
+							"    \"type\": \"object\",\r",
+							"    \"properties\": {\r",
+							"         \"title\":{\"type\":\"string\"},\r",
+							"         \"professor_id\":{\"type\":\"integer\"},\r",
+							"         \"updated_at\":{\"type\":\"string\"},\r",
+							"         \"created_at\":{\"type\":\"string\"},\r",
+							"         \"id\":{\"type\":\"integer\"}\r",
+							"    }\r",
+							"}\r",
+							"pm.test(\"Validate schema\", () => {\r",
+							"    pm.response.to.have.jsonSchema(schema);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"title\":\"malo drvo\",\"professor_id\":{{idProf}}}"
+				},
+				"url": {
+					"raw": "{{url}}diaries",
+					"host": [
+						"{{url}}diaries"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "my gradebook",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "02b975ee-06ca-4925-81d6-cd638405179c",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"const schema = {\r",
+							"    \"type\": \"object\",\r",
+							"    \"properties\": {\r",
+							"         \"title\":{\"type\":\"string\"},\r",
+							"         \"professor_id\":{\"type\":\"integer\"},\r",
+							"         \"updated_at\":{\"type\":\"string\"},\r",
+							"         \"created_at\":{\"type\":\"string\"},\r",
+							"         \"id\":{\"type\":\"integer\"},\r",
+							"           \"professor\":{\r",
+							"                    \"type\":\"object\",\r",
+							"                    \"properties\": { \r",
+							"                       \"id\":{\"type\":\"integer\"},\r",
+							"                       \"user_id\":{\"type\":\"integer\"},\r",
+							"                       \"url\":{\"type\":[\"string\", \"null\"]},\r",
+							"                        \"created_at\":{\"type\":\"string\"},\r",
+							"                        \"updated_at\":{\"type\":\"string\"},\r",
+							"                         \"user\": {\r",
+							"                            \"id\":{\"type\":\"integer\"},\r",
+							"                            \"firstName\": {\"type\":\"string\"},\r",
+							"                            \"lastName\": {\"type\":\"string\"},\r",
+							"                            \"email\":{\"type\":\"string\"},\r",
+							"                            \"email_verified_at\": {\"type\":\"string\"},\r",
+							"                            \"created_at\": {\"type\":\"string\"},\r",
+							"                            \"updated_at\": {\"type\":\"string\"}\r",
+							"                    }\r",
+							"                    },\r",
+							"\r",
+							"                     \"required\":[\"id\",\"user_id\",\"created_at\",\"updated_at\"]\r",
+							"    }\r",
+							"}\r",
+							"}\r",
+							"pm.test(\"Validate schema\", () => {\r",
+							"    pm.response.to.have.jsonSchema(schema);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}diaries/my-diary/{{idProf}}",
+					"host": [
+						"{{url}}diaries"
+					],
+					"path": [
+						"my-diary",
+						"{{idProf}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add comment",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "64ee38ac-cbb5-482d-8628-ce087d1915fc",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);\r",
+							"\r",
+							"postman.setEnvironmentVariable(\"idComment\", jsonData.id);\r",
+							"\r",
+							"pm.test(\"Comment text\", function () {\r",
+							"  pm.expect(jsonData.text).to.equal(\"novi komentar malog drveta\");\r",
+							"});\r",
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"text\":\"novi komentar malog drveta\",\"user_id\":{{userId}}}"
+				},
+				"url": {
+					"raw": "{{url}}diaries/{{idBookgrade}}/comments",
+					"host": [
+						"{{url}}diaries"
+					],
+					"path": [
+						"{{idBookgrade}}",
+						"comments"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add student on gradebook",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "97d1c3cd-6dfd-4c27-be38-c56e3fa7f20a",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);\r",
+							"\r",
+							"//postman.setEnvironmentVariable(\"idStudent\", jsonData.id);\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"const schema = {\r",
+							"    \"type\": \"object\",\r",
+							"    \"properties\": {\r",
+							"         \"success\":{\"type\":\"boolean\"},\r",
+							"         \"message\":{\"type\":\"string\"},\r",
+							"    }\r",
+							"}\r",
+							"pm.test(\"Validate schema\", () => {\r",
+							"    pm.response.to.have.jsonSchema(schema);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"firstName\":\"drvo\",\"lastName\":\"lipa\",\"url\":[\"https://png.pngtree.com/png-vector/20190514/ourlarge/pngtree-hand-painted-boy-student-clipart-png-image_1042080.jpg\"]}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}diaries/{{idBookgrade}}/students",
+					"host": [
+						"{{url}}diaries"
+					],
+					"path": [
+						"{{idBookgrade}}",
+						"students"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete comment",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "b3d41a34-e74e-462f-a290-be2d6414e16e",
+						"exec": [
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}comments/{{idComment}}",
+					"host": [
+						"{{url}}comments"
+					],
+					"path": [
+						"{{idComment}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "all comment check delete",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "b1a3ff9b-3857-4c1f-bf3e-59ff632c16de",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);\r",
+							"\r",
+							"\r",
+							"var idObrisanogKomentara = pm.variables.get(\"idComment\");\r",
+							"var idExist = false;\r",
+							"\r",
+							"\r",
+							"for (i=0; i<jsonData.comments.length;i++){\r",
+							"  \r",
+							"  if (jsonData.comments[i].id == idObrisanogKomentara){\r",
+							"      idExist = true;\r",
+							"  }\r",
+							"}\r",
+							"tests[\"Stvarno je izbrisan\"] = idExist === false;\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}diaries/{{idBookgrade}}",
+					"host": [
+						"{{url}}diaries"
+					],
+					"path": [
+						"{{idBookgrade}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "all gradebooks_provera paginacije",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "62ae3b39-ea1d-4f8d-b7dc-2dc210845fd4",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);\r",
+							"\r",
+							"\r",
+							"pm.test(\"Check the number of the gradebook\", function () {\r",
+							"    pm.expect(jsonData.data).to.have.lengthOf(10);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/vnd.api+json",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}search?search_term=&page=2",
+					"host": [
+						"{{url}}search"
+					],
+					"query": [
+						{
+							"key": "search_term",
+							"value": ""
+						},
+						{
+							"key": "page",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "edit gradebook",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "b94f6b7a-89f3-4f33-b2d1-c999aee4c347",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);\r",
+							"\r",
+							"pm.test(\"Title is promenjen\", function () {\r",
+							"  pm.expect(jsonData.title).to.include(\"BLA BLA... promenjen title i promenjen profesor NOVI2\");\r",
+							"});\r",
+							"\r",
+							"// pm.test(\"Profesor is promenjen\", function () {\r",
+							"//   pm.expect(jsonData.professor_id).to.eql(213);\r",
+							"// });\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n   \"id\": {{idBookgrade}},\r\n   \"title\": \"BLA BLA... promenjen title i promenjen profesor NOVI2\",\r\n   \"professor_id\": {{idProf}},\r\n   \"created_at\": \"2020-08-11 15:41:07\",\r\n   \"updated_at\": \"2020-08-11 15:54:36\",\r\n   \"professor\": {\r\n      \"id\": {{idProf}},\r\n      \"user_id\": {{userId}},\r\n      \"url\": null,\r\n      \"created_at\": \"2020-08-09 10:19:58\",\r\n      \"updated_at\": \"2020-08-09 10:19:58\",\r\n      \"user\": {\r\n         \"id\": {{userId}},\r\n         \"firstName\": \"Old\",\r\n         \"lastName\": \"School Professor\",\r\n         \"email\": \"nekiemail@gmail.com\",\r\n         \"email_verified_at\": \"2020-08-09 10:19:58\",\r\n         \"termsAndConditions\": null,\r\n         \"created_at\": \"2020-08-09 10:19:58\",\r\n         \"updated_at\": \"2020-08-09 10:19:58\"\r\n      }\r\n   },\r\n   \"students\": [\r\n      {\r\n         \"id\": 145,\r\n         \"firstName\": \"drvo\",\r\n         \"lastName\": \"lipa\",\r\n         \"diary_id\": 292,\r\n         \"created_at\": \"2020-08-11 15:45:52\",\r\n         \"updated_at\": \"2020-08-11 15:45:52\"\r\n      }\r\n   ],\r\n   \"comments\": []\r\n}"
+				},
+				"url": {
+					"raw": "{{url}}diaries/{{idBookgrade}}",
+					"host": [
+						"{{url}}diaries"
+					],
+					"path": [
+						"{{idBookgrade}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete gradebook",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "28844b22-52b8-4135-aa49-56b320a50791",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody)\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}diaries/{{idBookgrade}}",
+					"host": [
+						"{{url}}diaries"
+					],
+					"path": [
+						"{{idBookgrade}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add professor",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "cdae1a4a-29d7-4788-8602-4ae47b3713d8",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);\r",
+							"\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"const schema = {\r",
+							"    \"type\": \"object\",\r",
+							"    \"properties\": {\r",
+							"         \"success\":{\"type\":\"boolean\"},\r",
+							"         \"message\":{\"type\":\"string\"},\r",
+							"    }\r",
+							"}\r",
+							"pm.test(\"Validate schema, novi profesor je dodat\", () => {\r",
+							"    pm.response.to.have.jsonSchema(schema);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"url\": [\r\n        \"https://glossy.espreso.rs/data/images/2018/05/11/10/224831_1484403-1802bursac1-ff_ff.jpg\"\r\n    ],\r\n    \"firstName\": \"Kaca\",\r\n    \"lastName\": \"Vini\",\r\n    \"diary_id\": \"\"\r\n}"
+				},
+				"url": {
+					"raw": "{{url}}professors",
+					"host": [
+						"{{url}}professors"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all profesors for save ID",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "c7b2ce1f-9828-4bb7-aa33-d4a850ba77db",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"for (i=0; i<jsonData.length;i++){",
+							"  if (i == jsonData.length - 1){",
+							"      pm.environment.set(\"idLastProf\", jsonData[i].id);",
+							"  }",
+							"} "
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}professors",
+					"host": [
+						"{{url}}professors"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create gradebook to take a profesor",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "0aaa1394-8bd9-45f2-a825-b731de68300c",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);\r",
+							"\r",
+							"postman.setEnvironmentVariable(\"uderId\", jsonData.user_id);\r",
+							"postman.setEnvironmentVariable(\"idBookgrade\", jsonData.id);\r",
+							"\r",
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"const schema = {\r",
+							"    \"type\": \"object\",\r",
+							"    \"properties\": {\r",
+							"         \"title\":{\"type\":\"string\"},\r",
+							"         \"professor_id\":{\"type\":\"integer\"},\r",
+							"         \"updated_at\":{\"type\":\"string\"},\r",
+							"         \"created_at\":{\"type\":\"string\"},\r",
+							"         \"id\":{\"type\":\"integer\"}\r",
+							"    }\r",
+							"}\r",
+							"pm.test(\"Validate schema\", () => {\r",
+							"    pm.response.to.have.jsonSchema(schema);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Bearer {{token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"title\":\"flekica\",\"professor_id\":{{idLastProf}}}"
+				},
+				"url": {
+					"raw": "{{url}}diaries",
+					"host": [
+						"{{url}}diaries"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all profesors to chekc if profesor taken",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "84d29a45-7327-496c-91b0-8e63c95dd756",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"var idLastProf = pm.variables.get(\"idLastProf\");",
+							"var idExist = false;",
+							"",
+							"for (i=0; i<jsonData.length;i++){",
+							"  if (jsonData[i].id == idLastProf){",
+							"      idExist = jsonData[i].diary === null",
+							"  }",
+							"} ",
+							"",
+							"tests[\"Profesor je vec uzeo dnevnik\"] = idExist === false;",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Bearer {{token}}"
+					}
+				],
+				"url": {
+					"raw": "{{url}}professors",
+					"host": [
+						"{{url}}professors"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete gradebook profesor is avaliable again",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "7380a469-83a8-48b1-b8cb-ad25ff69120f",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody)\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}diaries/{{idBookgrade}}",
+					"host": [
+						"{{url}}diaries"
+					],
+					"path": [
+						"{{idBookgrade}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all profesors to chekc if profesor taken Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "25e15632-ee67-4016-8236-e5b720be8be7",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"var idLastProf = pm.variables.get(\"idLastProf\");",
+							"var idExist = false;",
+							"",
+							"for (i=0; i<jsonData.length;i++){",
+							"  if (jsonData[i].id == idLastProf){",
+							"      idExist = jsonData[i].diary === null",
+							"  }",
+							"} ",
+							"",
+							"tests[\"Profesor je ponovo dostupan da uzme dnevnik\"] = idExist === true;",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Bearer {{token}}"
+					}
+				],
+				"url": {
+					"raw": "{{url}}professors",
+					"host": [
+						"{{url}}professors"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "register user 2 with the exist email",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "cf8740e8-75e6-4ec5-8dd4-33c05a2b7489",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);\r",
+							"\r",
+							"//postman.setEnvironmentVariable(\"token\", jsonData.access_token);\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"\r",
+							"const schema = {\r",
+							"    \"type\": \"object\",\r",
+							"     \"properties\": { \r",
+							"                \"id\":{\"type\":\"integer\"},\r",
+							"                \"firstName\":{\"type\":\"string\"},\r",
+							"                \"lastName\":{\"type\":\"string\"},\r",
+							"                \"email\":{\"type\":\"string\"},\r",
+							"                \"email_verified_at\":{\"type\":\"string\"},\r",
+							"                \"termsAndConditions\":{\"type\":[\"string\", \"null\"]},\r",
+							"                \"created_at\":{\"type\":\"string\"},\r",
+							"                \"updated_at\":{\"type\":\"string\"},\r",
+							"                \"professor\":{\r",
+							"                    \"type\":\"object\",\r",
+							"                    \"properties\": { \r",
+							"                       \"id\":{\"type\":\"integer\"},\r",
+							"                       \"user_id\":{\"type\":\"integer\"},\r",
+							"                       \"url\":{\"type\":[\"string\", \"null\"]},\r",
+							"                        \"created_at\":{\"type\":\"string\"},\r",
+							"                        \"updated_at\":{\"type\":\"string\"}\r",
+							"                    },\r",
+							"                     \"required\":[\"id\",\"user_id\",\"created_at\",\"updated_at\"]\r",
+							"                }\r",
+							"}\r",
+							"}\r",
+							"pm.test(\"Validate schema\", () => {\r",
+							"    pm.response.to.have.jsonSchema(schema);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"firstName\": \"Drvo\",\r\n    \"lastName\": \"Hrast\",\r\n    \"email\": \"{{email}}\",\r\n    \"password\": \"987654321\"\r\n}"
+				},
+				"url": {
+					"raw": "{{url}}register",
+					"host": [
+						"{{url}}register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all users to check if register user 2 exist",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d67cb81e-a6f7-42dc-b23e-df6e4d265398",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"var myEmail = pm.variables.get(\"email\");",
+							"var counter = 0;",
+							"",
+							"for (i=0; i<jsonData.length;i++){",
+							"  if (jsonData[i].user.email == myEmail){",
+							"     counter = counter + 1;",
+							"  }",
+							"} ",
+							"if(counter > 1){",
+							"  tests[\"Test je pao. Broj usera koji imaju isti email je: \" + counter.toString()] = counter > 1;",
+							"}else{",
+							"  tests[\"Test je prosao. Postoi samo jedan user sa ovim mail-om iako smo ga dva puta registrovali\"] = counter == 1;",
+							"}",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Bearer {{token}}"
+					}
+				],
+				"url": {
+					"raw": "{{url}}professors",
+					"host": [
+						"{{url}}professors"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "e563d06e-8bd1-4c3b-8707-e57f874ac5ca",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "02c6129b-4143-4eb9-bc33-99dd08d22837",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"protocolProfileBehavior": {}
+}
